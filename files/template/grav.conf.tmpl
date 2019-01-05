@@ -1,0 +1,70 @@
+server {
+    listen 80 default_server;
+    index index.html index.php;
+
+    root {{ .Env.HOME }}/grav;
+    server_name {{ default .Env.VIRTUAL_HOST "localhost" }};
+
+    set_real_ip_from  {{ default .Env.REAL_IP_FROM "172.17.0.0/16" }};
+    real_ip_header    "X-Forwarded-For";
+    real_ip_recursive on;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~* /(\.git|cache|bin|logs|backup|tests)/.*$ {
+        return 403;
+    }
+
+    location ~* /(system|vendor)/.*\.(txt|xml|md|html|yaml|yml|php|pl|py|cgi|twig|sh|bat)$ {
+        return 403;
+    }
+
+    location ~* /user/.*\.(txt|md|yaml|yml|php|pl|py|cgi|twig|sh|bat)$ {
+        return 403;
+    }
+
+    location ~ /(LICENSE\.txt|composer\.lock|composer\.json|nginx\.conf|web\.config|htaccess\.txt|\.htaccess) {
+        return 403;
+    }
+
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
+    location = /robots.txt {
+        allow all;
+        log_not_found off;
+        access_log off;
+    }
+
+    location = /sitemap.xml {
+        allow all;
+        log_not_found off;
+        access_log off;
+    }
+
+    location ~ \.(css|htc|js|js2|js3|js4)$ {
+        expires max;
+        add_header Pragma "public";
+        add_header Cache-Control "max-age=31536000, public, must-revalidate, proxy-revalidate";
+    }
+
+    location ~ \.(asf|asx|wax|wmv|wmx|avi|bmp|class|divx|doc|docx|eot|exe|gif|gz|gzip|ico|jpg|jpeg|jpe|json|mdb|mid|midi|mov|qt|mp3|m4a|mp4|m4v|mpeg|mpg|mpe|mpp|otf|odb|odc|odf|odg|odp|ods|odt|ogg|pdf|png|pot|pps|ppt|pptx|ra|ram|svg|svgz|swf|tar|tif|tiff|ttf|ttc|wav|wma|wri|xla|xls|xlsx|xlt|xlw|zip)$ {
+        expires max;
+        add_header Pragma "public";
+        add_header Cache-Control "max-age=31536000, public, must-revalidate, proxy-revalidate";
+        log_not_found off;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass phpfpm;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+        fastcgi_param HTTPS {{ default .Env.VIRTUAL_HOST "off" }};
+    }
+}

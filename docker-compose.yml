@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  grav:
+    image: idjavahost/grav:latest
+    container_name: grav
+    network_mode: bridge
+    environment:
+      - VIRTUAL_HOST=grav.localhost
+      - SSH_PASSWORD=qwerty
+      - ADMIN_USERNAME=admin
+      - ADMIN_EMAIL=admin@localhost
+      - ADMIN_PASSWORD=admin123
