@@ -5,7 +5,6 @@ if [[ ! -f /etc/.setupdone ]]; then
 
     # RUN INITIAL SETUP
     RANDPASS=$(date | md5sum | awk '{print $1}')
-    mkdir $HOME/grav
     addgroup -g 1001 $USERGROUP
     adduser -D -u 1001 -h $HOME -s /bin/bash -G $USERGROUP $USERNAME
     echo "${USERNAME}:${RANDPASS}" | chpasswd &> /dev/null
