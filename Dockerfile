@@ -11,6 +11,7 @@ ENV     VIRTUAL_HOST=$DOCKER_HOST \
         HTTPS=off \
         USERNAME=grav \
         USERGROUP=grav \
+        GRAV_VERSION=1.5.6 \
         DOCKERIZE_VERSION=0.6.1 \
         COMPOSER_VERSION=1.8.0 \
         ALPINE_MIRROR=mirrors.ustc.edu.cn
@@ -38,4 +39,5 @@ RUN     chmod +x /entrypoint.sh && \
         apk del .build-deps && \
         rm -rf /tmp/*
 
+WORKDIR /var/www
 ENTRYPOINT /entrypoint.sh
